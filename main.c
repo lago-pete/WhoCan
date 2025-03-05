@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <pwd.h>
+#include <grp.h>
 
 
 #define PATH_MAX        4096 
@@ -77,9 +78,26 @@ int get_info_pw()
 
 
 
+int get_info_gr()
+{
+    struct group *gr;
+
+    while ((gr = getgrent()) != NULL) {
+        printf("Group: %s (GID: %d)\n", gr->gr_name, gr->gr_gid);
+    }
+
+    endgrent();
+    return 0;
+}
+
+
+
+
+
 int main(int argc, char *argv[]) {
     check_permissions(argv[1]);
     check_path(argv[1]);
     get_info_pw();
+    get_info_gr();
     return 0;
 }
