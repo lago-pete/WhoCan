@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <pwd.h>
 
 
 #define PATH_MAX        4096 
@@ -51,8 +52,34 @@ int check_path(const char *filename)
 }
 
 
+// struct passwd {
+//     char   *pw_name;       /* username */
+//     char   *pw_passwd;     /* user password */
+//     uid_t   pw_uid;        /* user ID */
+//     gid_t   pw_gid;        /* group ID */
+//     char   *pw_gecos;      /* user information */
+//     char   *pw_dir;        /* home directory */
+//     char   *pw_shell;      /* shell program */
+// };
+
+
+int get_info_pw()
+{
+    struct passwd *pw;
+
+    while ((pw = getpwent()) != NULL) {
+        printf("User: %s (UID: %d)   UserDir: %s\n", pw->pw_name, pw->pw_uid, pw->pw_dir);
+    }
+
+    endpwent();
+    return 0;
+}
+
+
+
 int main(int argc, char *argv[]) {
     check_permissions(argv[1]);
     check_path(argv[1]);
+    get_info_pw();
     return 0;
 }
