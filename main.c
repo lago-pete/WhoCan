@@ -1,5 +1,11 @@
 #include <sys/stat.h>
 #include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
+
+#define PATH_MAX        4096 
+
 
 void check_permissions(const char *filename) {
     struct stat sb;
@@ -32,10 +38,21 @@ void check_permissions(const char *filename) {
 
 
 
+int check_path(const char *filename)
+{
+    char resolved_path[PATH_MAX];
+    if (realpath(filename, resolved_path) == NULL) {
+        perror("realpath");
+        return 1;
+    }
 
+    printf("Absolute path: %s\n", resolved_path);
+    return 0;
+}
 
 
 int main(int argc, char *argv[]) {
     check_permissions(argv[1]);
+    check_path(argv[1]);
     return 0;
 }
