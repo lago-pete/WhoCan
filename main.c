@@ -30,7 +30,12 @@ void check_permissions(const char *filename) {
            (sb.st_mode & S_IXOTH) ? 'x' : '-');
 }
 
-int main() {
-    check_permissions("testfile");
+
+
+
+
+
+int main(int argc, char *argv[]) {
+    check_permissions(argv[1]);
     return 0;
 }
