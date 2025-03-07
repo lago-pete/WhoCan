@@ -14,7 +14,6 @@
 
 
 
-
 int check_act(const char *action);
 void print_rez(char **users, int num);
 int act_perm(const char *act, struct stat *sb);

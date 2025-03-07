@@ -1,8 +1,6 @@
 #include "whocan.h"
-
-
-
 int everyone = 1;
+
 
 
 int runner(const char *act, const char * file_name)
@@ -98,9 +96,17 @@ void print_rez(char **users, int num)
 
 
 //need to be able to jump back and then check 
+// needs to check parent dir
+// parent dir  -> rwxrwxrwxt (looks for sticky bit)
+// if sticky then only owners can delete
+// if not sticky then if write and execute then can delete
+
+// dir -> drwxrwxrwt
+// file -> -rw-r--r--
 
 
 int can_delete(const char *filepath, struct passwd *pw) {
+
     struct stat file_stat, parent_stat;
     char parent_path[MAX_PATH];
 
@@ -113,6 +119,9 @@ int can_delete(const char *filepath, struct passwd *pw) {
     strncpy(parent_path, filepath, MAX_PATH );
     parent_path[MAX_PATH - 1] = '\0'; 
     char *last_slash = strrchr(parent_path, '/');
+
+
+
     if (last_slash) {
         *last_slash = '\0';
     } else {
@@ -123,6 +132,7 @@ int can_delete(const char *filepath, struct passwd *pw) {
         perror("stat parent dir");
         return 0;
     }
+
 
     if (parent_stat.st_mode & S_ISVTX) {
         return (file_stat.st_uid == pw->pw_uid || parent_stat.st_uid == pw->pw_uid);
@@ -226,6 +236,32 @@ int act_perm(const char *act, struct stat *sb) {
 
 
 //testing section
+
+
+//using getgrgid instead of getgrent
+// int perm_check(struct stat *sb, struct passwd *pw, int curr_perm) {
+//     struct group *grp;
+
+    
+//     if (sb->st_uid == pw->pw_uid) {
+//         return sb->st_mode & curr_perm;
+//     }
+
+//     setgrent(); 
+//     while ((grp = getgrent()) != NULL) {
+//         if (grp->gr_gid == sb->st_gid) {  
+//             for (int i = 0; grp->gr_mem[i]; i++) {
+//                 if (strcmp(grp->gr_mem[i], pw->pw_name) == 0) {  
+//                     return sb->st_mode & (curr_perm >> 3);
+//                 }
+//             }
+//         }
+//     }
+//     endgrent();
+
+   
+//     return sb->st_mode & (curr_perm >> 6);
+// }
 
 //void check_permissions(const char *filename, struct stat *sb) {
     
