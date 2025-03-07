@@ -72,7 +72,7 @@ int runner(const char *act, const char * file_name)
         print_rez(users, num);
     }
 
-    free(users);
+    //free(users); free(): double free detected in tcache 2 Aborted (core dumped): still not working: just had to make clean then re make, now working
     everyone = 1;
 
     return 0;
@@ -97,6 +97,9 @@ void print_rez(char **users, int num)
 
 
 
+//need to be able to jump back and then check 
+
+
 int can_delete(const char *filepath, struct passwd *pw) {
     struct stat file_stat, parent_stat;
     char parent_path[MAX_PATH];
@@ -106,7 +109,7 @@ int can_delete(const char *filepath, struct passwd *pw) {
         return 0;
     }
 
-    // Resolve parent directory path
+    
     strncpy(parent_path, filepath, MAX_PATH );
     parent_path[MAX_PATH - 1] = '\0'; 
     char *last_slash = strrchr(parent_path, '/');
@@ -117,7 +120,7 @@ int can_delete(const char *filepath, struct passwd *pw) {
     }
 
     if (stat(parent_path, &parent_stat) == -1) {
-        perror("stat (parent dir)");
+        perror("stat parent dir");
         return 0;
     }
 
