@@ -9,6 +9,7 @@
 #include <grp.h>
 #include <sys/types.h>
 #include <string.h>
+#include <libgen.h>
 
 #define MAX_PATH 4096
 

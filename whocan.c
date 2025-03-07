@@ -105,43 +105,42 @@ void print_rez(char **users, int num)
 // file -> -rw-r--r--
 
 
-int can_delete(const char *filepath, struct passwd *pw) {
 
-    struct stat file_stat, parent_stat;
-    char parent_path[MAX_PATH];
 
-    if (stat(filepath, &file_stat) == -1) {
+int can_delete(const char *filepath, struct passwd *pw)
+{
+    struct stat file_stat;
+    struct stat parent_stat;
+    char path_copy[MAX_PATH]; 
+
+   
+    if (stat(filepath, &file_stat) == -1)
+    {
         perror("stat");
         return 0;
     }
 
+    strncpy(path_copy, filepath, MAX_PATH - 1);
+    path_copy[MAX_PATH - 1] = '\0';
+
     
-    strncpy(parent_path, filepath, MAX_PATH );
-    parent_path[MAX_PATH - 1] = '\0'; 
-    char *last_slash = strrchr(parent_path, '/');
+    char *parent_path = dirname(path_copy);
 
-
-
-    if (last_slash) {
-        *last_slash = '\0';
-    } else {
-        strcpy(parent_path, ".");
-    }
-
-    if (stat(parent_path, &parent_stat) == -1) {
+    if (stat(parent_path, &parent_stat) == -1)
+    {
         perror("stat parent dir");
         return 0;
     }
 
-
-    if (parent_stat.st_mode & S_ISVTX) {
+    
+    if (parent_stat.st_mode & S_ISVTX)
+    {
         return (file_stat.st_uid == pw->pw_uid || parent_stat.st_uid == pw->pw_uid);
     }
 
+    
     return perm_check(&parent_stat, pw, S_IWUSR | S_IXUSR);
 }
-
-
 
 // 421 421 421
 
@@ -237,6 +236,46 @@ int act_perm(const char *act, struct stat *sb) {
 
 //testing section
 
+
+
+
+
+
+// int can_delete(const char *filepath, struct passwd *pw) {
+
+//     struct stat file_stat, parent_stat;
+//     char parent_path[MAX_PATH];
+
+//     if (stat(filepath, &file_stat) == -1) {
+//         perror("stat");
+//         return 0;
+//     }
+
+    
+//     strncpy(parent_path, filepath, MAX_PATH );
+//     parent_path[MAX_PATH - 1] = '\0'; 
+//     char *last_slash = strrchr(parent_path, '/');
+
+
+
+//     if (last_slash) {
+//         *last_slash = '\0';
+//     } else {
+//         strcpy(parent_path, ".");
+//     }
+
+//     if (stat(parent_path, &parent_stat) == -1) {
+//         perror("stat parent dir");
+//         return 0;
+//     }
+
+
+//     if (parent_stat.st_mode & S_ISVTX) {
+//         return (file_stat.st_uid == pw->pw_uid || parent_stat.st_uid == pw->pw_uid);
+//     }
+
+//     return perm_check(&parent_stat, pw, S_IWUSR | S_IXUSR);
+// }
 
 //using getgrgid instead of getgrent
 // int perm_check(struct stat *sb, struct passwd *pw, int curr_perm) {
